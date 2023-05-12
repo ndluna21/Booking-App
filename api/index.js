@@ -1,45 +1,58 @@
 const express = require('express');
 const cors = require('cors');
-const { mongoose } = require('mongoose');
+const mongoose = require("mongoose");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('./models/User.js');
-const Place = require('./models/Place.js')
 const cookieParser = require('cookie-parser')
 const imageDownloader = require('image-downloader')
+const {S3Client, PutObjectCommand} = require('@aws-sdk/client-s3');
 const multer= require('multer')
 const fs = require('fs')
+const mime = require('mime-types');
+const User = require('./models/User.js');
+const Place = require('./models/Place.js')
+const Booking = require('./models/Booking.js')
 
 require('dotenv').config();
 const app = express();
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'knjvskdbvjksknkslkn';
+const bucket = 'luna-booking-app';
 
 app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(__dirname+'/uploads'))
-app.use(
-  cors({
+app.use(cors({
     credentials: true,
     origin: 'http://localhost:5173',
   })
 );
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
 
+function getUserDataFromReq(req) {
+  return new Promise((resolve, reject) => {
+    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      resolve(userData);
+    });
+  })
+  
+}
 
-mongoose.connect(process.env.MONGO_URL);
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
 
 app.get('/test', (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   res.json('test ok');
 });
 
 // mcHr387Kjc7DHXrF
 app.post('/register', async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { name, email, password } = req.body;
 
   try {
@@ -55,6 +68,7 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
     const {email,password} = req.body;
     const userDoc = await User.findOne({email})
     if (userDoc) {
@@ -77,6 +91,7 @@ app.post('/login', async (req, res) => {
 })
 
 app.get('/profile', (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const {token} = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -104,10 +119,10 @@ app.post('/upload-by-link', async (req, res) => {
 })
 
 const photoMiddleware = multer({dest: 'uploads/'})
-app.post('/upload', photoMiddleware.array('photos', 100), (req,res) => {
+app.post('/upload', photoMiddleware.array('photos', 100), async (req,res) => {
   const uploadedFiles = [];
   for (let i = 0; i < req.files.length; i++) {
-    const {path, originalName} = req.files[i];
+    const {path, originalName, mimetype} = req.files[i];
     const parts = originalName.split('.')
     const ext = parts[parts.length - 1]
     const newPath = path + '.' + ext;
@@ -118,6 +133,7 @@ app.post('/upload', photoMiddleware.array('photos', 100), (req,res) => {
 })
 
 app.post('/places', (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const {token} = req.cookies;
   const {
     title, address, addedPhotos, description, 
@@ -126,16 +142,17 @@ app.post('/places', (req, res) => {
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     if (err) throw err;
     const placeDoc = await Place.create({
-      owner: userData.id,
+      owner: userData.id, price,
       title, address, photos: addedPhotos, 
       description, perks, extraInfo, checkIn, 
-      checkOut, maxGuests, price,
+      checkOut, maxGuests, 
     })
     res.json(placeDoc)
   })
 })
 
 app.get('/user-places', (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const {token} = req.cookies;
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     const {id} = userData;
@@ -144,11 +161,13 @@ app.get('/user-places', (req, res) => {
 })
 
 app.get('/places/:id', async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const {id} = req.params;
   res.json(await Place.findById(id))
 })
 
 app.put('/places', async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const {token} = req.cookies;
   const {
     id, title, address, addedPhotos, 
@@ -160,7 +179,6 @@ app.put('/places', async (req, res) => {
     const placeDoc = await Place.findById(id)
     if (userData.id === placeDoc.owner.toString()) {
       placeDoc.set({
-        owner: userData.id,
         title, address, photos: addedPhotos, 
         description, perks, extraInfo, checkIn, 
         checkOut, maxGuests, price,
@@ -172,7 +190,32 @@ app.put('/places', async (req, res) => {
 })
 
 app.get('/places', async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   res.json (await Place.find())
+})
+
+mongoose.connect(process.env.MONGO_URL);
+
+app.post('/bookings', async (req, res) => {
+  const userData = await getUserDataFromReq(req)
+  const {
+    place, checkIn, checkOut, numberOfGuests, name, phone, price,
+  } = req.body;
+  Booking.create({
+    place, checkIn, checkOut, numberOfGuests,name,phone,price,
+    user:userData.id
+  }).then((doc) => {
+    res.json(doc);
+  }).catch((err) => {
+    throw err;
+  })
+})
+
+
+
+app.get('/bookings', async (req, res) => {
+  const userData = await getUserDataFromReq(req)
+  res.json( await Booking.find({user:userData.id}).populate('place'))
 })
 
 app.listen(4000);
