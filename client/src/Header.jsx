@@ -14,36 +14,11 @@ export default function Header() {
         <span className="font-bold text-xl">airbnc</span>
       </Link>
       <div className={`d-flex justify-content-center`}>
-        <Link to="/" className={`nav-link px-2 bg`}>
-          TRANG CHỦ
-        </Link>
-        <NavDropdown title="DÒNG LỊCH SỬ" className={`nav-link px-2 bg`}>
-          <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-          <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-          <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-          <NavDropdown.Divider />
-          <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+        <NavDropdown title="Any where" className={`nav-link px-2 bg`}>
         </NavDropdown>
-        <NavDropdown title="TƯ LIỆU" className={`nav-link px-2 bg`}>
-          <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-          <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-          <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-          <NavDropdown.Divider />
-          <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+        <NavDropdown title="Any week" className={`nav-link px-2 bg`}>
         </NavDropdown>
-        <NavDropdown title="NHÂN VẬT" className={`nav-link px-2 bg`}>
-          <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-          <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-          <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-          <NavDropdown.Divider />
-          <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-        </NavDropdown>
-        <NavDropdown title="DI TÍCH" className={`nav-link px-2 bg`}>
-          <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-          <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-          <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-          <NavDropdown.Divider />
-          <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+        <NavDropdown title="Add guest" className={`nav-link px-2 bg`}>
         </NavDropdown>
       </div>
       <div className="flex item-center gap-2 border border-gray-300 rounded-full py-2 px-4 shadow-md">

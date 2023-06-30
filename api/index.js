@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser')
 const imageDownloader = require('image-downloader')
-const {S3Client, PutObjectCommand} = require('@aws-sdk/client-s3');
 const multer= require('multer')
 const fs = require('fs')
 const mime = require('mime-types');
@@ -38,12 +37,6 @@ function getUserDataFromReq(req) {
   })
   
 }
-
-// app.use(function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "http://localhost:5173");
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// });
 
 app.get('/test', (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
@@ -210,8 +203,6 @@ app.post('/bookings', async (req, res) => {
     throw err;
   })
 })
-
-
 
 app.get('/bookings', async (req, res) => {
   const userData = await getUserDataFromReq(req)
