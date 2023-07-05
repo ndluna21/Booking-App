@@ -19,6 +19,7 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'knjvskdbvjksknkslkn';
 const bucket = 'luna-booking-app';
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(__dirname+'/uploads'))
