@@ -187,9 +187,9 @@ app.get('/places', async (req, res) => {
   res.json (await Place.find())
 })
 
-mongoose.connect(process.env.MONGO_URL);
 
 app.post('/bookings', async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req)
   const {
     place, checkIn, checkOut, numberOfGuests, name, phone, price,
