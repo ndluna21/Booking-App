@@ -205,6 +205,7 @@ app.post('/bookings', async (req, res) => {
 })
 
 app.get('/bookings', async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req)
   res.json( await Booking.find({user:userData.id}).populate('place'))
 })
