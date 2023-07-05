@@ -28,7 +28,7 @@ app.use(cors({
   })
 );
 
-var PTest = function getUserDataFromReq(req) {
+var PTest = async function getUserDataFromReq(req) {
   return new Promise(function (resolve, reject) {
     const token = req.cookies?.token;
     if (token) {
@@ -261,7 +261,7 @@ app.post('/bookings', async (req, res) => {
     .catch(err => {
         console.error('Failed to connect to Mongo: ' + err);
     });
-  const userData = await getUserDataFromReq(req)
+  const userData = await PTest;
   const {
     place, checkIn, checkOut, numberOfGuests, name, phone, price,
   } = req.body;
@@ -283,7 +283,7 @@ app.get('/bookings', async (req, res) => {
   .catch(err => {
       console.error('Failed to connect to Mongo: ' + err);
   });
-  const userData = await getUserDataFromReq(req)
+  const userData = await PTest
   res.json( await Booking.find({user:userData.id}).populate('place'))
 })
 
