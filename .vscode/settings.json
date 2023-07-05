@@ -1,4 +1,0 @@
-{
-    "appService.defaultWebAppToDeploy": "undefined/subscriptions/54393b42-75e1-4d1a-8861-c655e6c4bb78/resourceGroups/mern/providers/Microsoft.Web/sites/bookingappmern",
-    "appService.deploySubpath": "."
-}
