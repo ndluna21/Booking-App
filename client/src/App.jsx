@@ -12,7 +12,7 @@ import PlaceFormPage from './pages/PlaceFormPage';
 import PlacePage from './pages/PlacePage';
 import BookingsPage from './pages/BookingsPage';
 
-axios.defaults.baseURL = 'https://mernbookingapp.onrender.com/';
+axios.defaults.baseURL = 'https://mernbookingapp.onrender.com';
 axios.defaults.withCredentials = true;
 
 function App() {
