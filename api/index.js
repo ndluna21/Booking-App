@@ -267,19 +267,20 @@ app.post('/bookings', async (req, res) => {
     place, checkIn, checkOut, numberOfGuests, name, phone, price,
   } = req.body;
   Booking.create({
-    place: req.body.place, 
-    checkIn: req.body.checkIn, 
-    checkOut: req.body.checkOut,
-    numberOfGuests: req.body.numberOfGuests,
-    name: req.body.name,
-    phone: req.body.phone,
-    price: req.body.price,
-    user:userData.id
+    place, 
+    checkIn, 
+    checkOut,
+    numberOfGuests,
+    name,
+    phone,
+    price,
+    user: userData.id
   }).then((doc) => {
     res.json(doc);
   }).catch((err) => {
     throw err;
   })
+  console.log(userData.id)
 })
 
 app.get('/bookings', async (req, res) => {
