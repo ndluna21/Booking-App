@@ -28,12 +28,17 @@ app.use(cors({
   })
 );
 
-function getUserDataFromReq(req) {
+async function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
-    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      resolve(userData);
-    });
+    const token = req.cookies?.token;
+        if (token) {
+            jwt.verify(token, jwtSecret, {}, (err, userData) => {
+                if (err) throw err;
+                resolve(userData);
+            });
+        } else {
+            reject('no token')
+        }
   })
   
 }
