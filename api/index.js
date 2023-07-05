@@ -28,8 +28,8 @@ app.use(cors({
   })
 );
 
-function getUserDataFromReq(req) {
-  return new Promise((resolve, reject) => {
+var PTest = function getUserDataFromReq(req) {
+  return new Promise(function (resolve, reject) {
     const token = req.cookies?.token;
     if (token) {
         jwt.verify(token, jwtSecret, {}, (err, userData) => {
@@ -41,6 +41,13 @@ function getUserDataFromReq(req) {
     }
   })
 }
+
+var myFunc = PTest();
+myFunc.then(function () {
+  console.log("Promise Resolved");
+}).catch(function () {
+  console.log("Promise Rejected");
+});
 
 app.get('/test', (req, res) => {
   mongoose.connect(process.env.MONGO_URL)
