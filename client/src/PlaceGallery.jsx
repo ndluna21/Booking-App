@@ -21,7 +21,7 @@ export default function PlaceGallery({place}) {
           </div>
           {place?.photos?.length > 0 && place.photos.map((photo) => (
               <div>
-                <img src={"https://mernbookingapp.onrender.com/uploads/" + photo} alt="" />
+                <img src={"http://localhost:4040//uploads/" + photo} alt="" />
               </div>
             ))}
         </div>

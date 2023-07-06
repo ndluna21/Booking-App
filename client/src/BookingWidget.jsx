@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useContext, useEffect, useState } from "react";
 import {differenceInCalendarDays}  from 'date-fns'
 import axios from "axios";
@@ -48,14 +47,12 @@ export default function BookingWidget({ place }) {
         <div className="flex">
           <div className="py-3 px-4">
             <label>Check in:</label>
-            <input type="date" 
-              value={checkIn} 
+            <input type="date" value={checkIn} 
               onChange={ev => setCheckIn(ev.target.value)}/>
           </div>
           <div className="py-3 px-4 border-l">
             <label>Check out:</label>
-            <input type="date" 
-              value={checkOut} 
+            <input type="date" value={checkOut} 
               onChange={ev => setCheckOut(ev.target.value)}/>
           </div>
         </div>

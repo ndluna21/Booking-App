@@ -25,12 +25,20 @@ app.use(cookieParser());
 app.use('/uploads', express.static(__dirname+'/uploads'))
 app.use(cors({
     credentials: true,
-    origin: 'https://taupe-strudel-b0f62a.netlify.app',
+    origin: 'https://taupe-strudel-b0f62a.netlify.app/',
   })
 );
 
-var PTest = async function getUserDataFromReq(req) {
-  return new Promise(function (resolve, reject) {
+mongoose.connect(process.env.MONGO_URL)
+  .then(() => {
+      console.log('Connected to Mongo Successfully');
+  })
+  .catch(err => {
+      console.error('Failed to connect to Mongo: ' + err);
+  });
+
+async function getUserDataFromReq(req) {
+  return new Promise((resolve, reject) => {
     const token = req.cookies?.token;
     if (token) {
         jwt.verify(token, jwtSecret, {}, (err, userData) => {
@@ -43,33 +51,14 @@ var PTest = async function getUserDataFromReq(req) {
   })
 }
 
-var myFunc = PTest();
-myFunc.then(function () {
-  console.log("Promise Resolved");
-}).catch(function () {
-  console.log("Promise Rejected");
-});
-
 app.get('/test', (req, res) => {
-  mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log('Connected to Mongo Successfully');
-    })
-    .catch(err => {
-        console.error('Failed to connect to Mongo: ' + err);
-    });
+  
   res.json('test ok');
 });
 
 // mcHr387Kjc7DHXrF
 app.post('/register', async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log('Connected to Mongo Successfully');
-    })
-    .catch(err => {
-        console.error('Failed to connect to Mongo: ' + err);
-    });
+  
   const { name, email, password } = req.body;
 
   try {
@@ -85,13 +74,6 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log('Connected to Mongo Successfully');
-    })
-    .catch(err => {
-        console.error('Failed to connect to Mongo: ' + err);
-    });
     const {email,password} = req.body;
     const userDoc = await User.findOne({email})
     if (userDoc) {
@@ -114,13 +96,7 @@ app.post('/login', async (req, res) => {
 })
 
 app.get('/profile', (req, res) => {
-  mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log('Connected to Mongo Successfully');
-    })
-    .catch(err => {
-        console.error('Failed to connect to Mongo: ' + err);
-    });
+  
   const {token} = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -162,13 +138,7 @@ app.post('/upload', async (req,res) => {
 })
 
 app.post('/places', (req, res) => {
-  mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log('Connected to Mongo Successfully');
-    })
-    .catch(err => {
-        console.error('Failed to connect to Mongo: ' + err);
-    });
+  
   const {token} = req.cookies;
   const {
     title, address, addedPhotos, description, 
@@ -187,13 +157,7 @@ app.post('/places', (req, res) => {
 })
 
 app.get('/user-places', (req, res) => {
-  mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log('Connected to Mongo Successfully');
-    })
-    .catch(err => {
-        console.error('Failed to connect to Mongo: ' + err);
-    });
+  
   const {token} = req.cookies;
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     const {id} = userData;
@@ -202,25 +166,13 @@ app.get('/user-places', (req, res) => {
 })
 
 app.get('/places/:id', async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log('Connected to Mongo Successfully');
-    })
-    .catch(err => {
-        console.error('Failed to connect to Mongo: ' + err);
-    });
+  
   const {id} = req.params;
   res.json(await Place.findById(id))
 })
 
 app.put('/places', async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log('Connected to Mongo Successfully');
-    })
-    .catch(err => {
-        console.error('Failed to connect to Mongo: ' + err);
-    });
+  
   const {token} = req.cookies;
   const {
     id, title, address, addedPhotos, 
@@ -243,38 +195,20 @@ app.put('/places', async (req, res) => {
 })
 
 app.get('/places', async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log('Connected to Mongo Successfully');
-    })
-    .catch(err => {
-        console.error('Failed to connect to Mongo: ' + err);
-    });
+  
   res.json (await Place.find())
 })
 
 
 app.post('/bookings', async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log('Connected to Mongo Successfully');
-    })
-    .catch(err => {
-        console.error('Failed to connect to Mongo: ' + err);
-    });
-  const userData = await PTest;
+  
+  const userData = await getUserDataFromReq(req);
   const {
     place, checkIn, checkOut, numberOfGuests, name, phone, price,
   } = req.body;
   Booking.create({
-    place, 
-    checkIn, 
-    checkOut,
-    numberOfGuests,
-    name,
-    phone,
-    price,
-    user: userData.id
+    place,checkIn,checkOut,numberOfGuests,name,phone,price,
+    user:userData.id,
   }).then((doc) => {
     res.json(doc);
   }).catch((err) => {
@@ -284,14 +218,7 @@ app.post('/bookings', async (req, res) => {
 })
 
 app.get('/bookings', async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-      console.log('Connected to Mongo Successfully');
-  })
-  .catch(err => {
-      console.error('Failed to connect to Mongo: ' + err);
-  });
-  const userData = await PTest
+  const userData = await getUserDataFromReq(req)
   res.json( await Booking.find({user:userData.id}).populate('place'))
 })
 
