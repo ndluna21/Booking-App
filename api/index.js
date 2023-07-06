@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use('/uploads', express.static(__dirname+'/uploads'))
 app.use(cors({
     credentials: true,
-    origin: 'https://taupe-strudel-b0f62a.netlify.app/',
+    origin: 'https://taupe-strudel-b0f62a.netlify.app',
   })
 );
 
